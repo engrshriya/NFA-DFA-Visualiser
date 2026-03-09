@@ -1,0 +1,40 @@
+body{
+font-family: Arial;
+background:#f2f2f2;
+margin:40px;
+}
+
+.container{
+background:white;
+padding:20px;
+border-radius:10px;
+width:400px;
+margin-bottom:30px;
+}
+
+input,textarea{
+width:100%;
+margin:6px 0;
+padding:8px;
+}
+
+button{
+padding:10px;
+background:#007bff;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+#nfaGraph,#dfaGraph{
+width:700px;
+height:400px;
+border:1px solid gray;
+background:white;
+margin-bottom:30px;
+}
+
+pre{
+background:white;
+padding:20px;
+}

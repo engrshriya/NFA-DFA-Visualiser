@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>NFA to DFA Visualizer</title>
+<link rel="stylesheet" href="style.css">
+
+<!-- graph visualization library -->
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+</head>
+
+<body>
+
+<h1>NFA → DFA Conversion (Subset Construction)</h1>
+
+<div class="container">
+
+<h3>NFA Input</h3>
+
+<label>States</label>
+<input id="states" placeholder="q0,q1,q2">
+
+<label>Alphabet</label>
+<input id="alphabet" placeholder="0,1">
+
+<label>Start State</label>
+<input id="start" placeholder="q0">
+
+<label>Final States</label>
+<input id="final" placeholder="q2">
+
+<label>Transitions (one per line)</label>
+
+<textarea id="transitions" rows="6">
+q0,0=q0,q1
+q0,1=q0
+q1,0=q2
+</textarea>
+
+<button onclick="runConversion()">Convert NFA → DFA</button>
+
+</div>
+
+<h2>NFA Graph</h2>
+<div id="nfaGraph"></div>
+
+<h2>DFA Graph</h2>
+<div id="dfaGraph"></div>
+
+<h2>DFA Transition Table</h2>
+<pre id="output"></pre>
+
+<script src="script.js"></script>
+
+</body>
+</html>
