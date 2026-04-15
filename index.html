@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NFA → DFA Visualizer | Learn Automata</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">🤖</span>
+      <div>
+        <div class="logo-title">AutomataLearn</div>
+        <div class="logo-sub">NFA → DFA Converter</div>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <a href="#what-is">What is NFA/DFA?</a>
+      <a href="#builder">Builder</a>
+      <a href="#steps">Steps</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="what-is">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="badge">✨ Interactive Learning</div>
+      <h1>Convert NFA to DFA<br/><span class="accent">Step by Step</span></h1>
+      <p class="hero-desc">Ever wondered how computers understand patterns? It all starts with automata! Let's learn how a <strong>Non-Deterministic Finite Automaton (NFA)</strong> can be converted into a <strong>Deterministic Finite Automaton (DFA)</strong> — interactively!</p>
+      <a href="#builder" class="cta-btn">Start Building →</a>
+    </div>
+    <div class="hero-cards">
+      <div class="concept-card nfa-card">
+        <div class="card-tag">NFA</div>
+        <h3>Non-Deterministic</h3>
+        <p>From one state, you can go to <em>multiple</em> next states on the same input — or even move without reading input (ε moves).</p>
+        <div class="card-icon">🌀</div>
+      </div>
+      <div class="concept-card dfa-card">
+        <div class="card-tag">DFA</div>
+        <h3>Deterministic</h3>
+        <p>From one state, exactly <em>one</em> next state exists for each input. Predictable, clean, and easy to simulate.</p>
+        <div class="card-icon">🎯</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEY IDEAS -->
+<section class="key-ideas">
+  <h2 class="section-title">Key Ideas Before We Start</h2>
+  <div class="ideas-grid">
+    <div class="idea-card">
+      <div class="idea-num">01</div>
+      <h4>States (Q)</h4>
+      <p>Circles in the diagram. Each represents a configuration the machine can be in.</p>
+    </div>
+    <div class="idea-card">
+      <div class="idea-num">02</div>
+      <h4>Alphabet (Σ)</h4>
+      <p>The set of input symbols the machine reads, like {0, 1} or {a, b}.</p>
+    </div>
+    <div class="idea-card">
+      <div class="idea-num">03</div>
+      <h4>Start State (q₀)</h4>
+      <p>Where the machine begins. Shown with an arrow pointing to it.</p>
+    </div>
+    <div class="idea-card">
+      <div class="idea-num">04</div>
+      <h4>Accept States (F)</h4>
+      <p>Double-circled states. If we end here after reading input, the string is <em>accepted</em>.</p>
+    </div>
+    <div class="idea-card">
+      <div class="idea-num">05</div>
+      <h4>Transition (δ)</h4>
+      <p>Rules that say: "In state X, on input a, go to state Y." Arrows in the diagram.</p>
+    </div>
+    <div class="idea-card">
+      <div class="idea-num">06</div>
+      <h4>Subset Construction</h4>
+      <p>The core algorithm: each DFA state represents a <em>set</em> of NFA states. That's the magic!</p>
+    </div>
+  </div>
+</section>
+
+<!-- BUILDER -->
+<section class="builder-section" id="builder">
+  <div class="builder-header">
+    <h2 class="section-title">🏗️ Build Your NFA</h2>
+    <p class="section-sub">Define your NFA below, then watch it convert to a DFA!</p>
+  </div>
+
+  <div class="builder-container">
+    <!-- LEFT: Config Panel -->
+    <div class="config-panel">
+      <div class="panel-block">
+        <label>States (comma-separated)</label>
+        <input type="text" id="statesInput" placeholder="e.g. q0, q1, q2" value="q0,q1,q2"/>
+        <div class="hint">First state is the start state</div>
+      </div>
+      <div class="panel-block">
+        <label>Alphabet (comma-separated)</label>
+        <input type="text" id="alphabetInput" placeholder="e.g. 0, 1" value="0,1"/>
+      </div>
+      <div class="panel-block">
+        <label>Accept States</label>
+        <input type="text" id="acceptInput" placeholder="e.g. q2" value="q2"/>
+      </div>
+
+      <div class="panel-block">
+        <label>Transition Function (δ)</label>
+        <div class="hint">Format: state,symbol → next_states (use comma for multiple, ε for epsilon)</div>
+        <div id="transitionInputs" class="transition-grid"></div>
+      </div>
+
+      <div class="panel-block">
+        <button class="btn-build" onclick="buildTransitionGrid()">🔄 Rebuild Transition Grid</button>
+      </div>
+
+      <div class="presets">
+        <div class="presets-label">📚 Load Example:</div>
+        <button class="preset-btn" onclick="loadPreset('strings_ending_1')">Strings ending in 1</button>
+        <button class="preset-btn" onclick="loadPreset('contains_ab')">Contains 'ab'</button>
+        <button class="preset-btn" onclick="loadPreset('epsilon')">With ε-moves</button>
+      </div>
+
+      <button class="btn-convert" onclick="runConversion()">⚡ Convert NFA → DFA</button>
+    </div>
+
+    <!-- RIGHT: NFA Graph -->
+    <div class="graph-panel">
+      <div class="graph-title">NFA Graph</div>
+      <div id="nfaSVGContainer" class="svg-graph-box" style="width:100%;height:340px;"></div>
+      <div class="graph-legend">
+        <span><span class="leg-circle start"></span> Start</span>
+        <span><span class="leg-circle accept"></span> Accept</span>
+        <span><span class="leg-circle normal"></span> Normal</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS SECTION -->
+<section class="steps-section" id="steps">
+  <h2 class="section-title">📋 Conversion Steps</h2>
+  <p class="section-sub">Run the conversion above to see all steps filled in here!</p>
+
+  <!-- Step 1 -->
+  <div class="step-card" id="step1">
+    <div class="step-header">
+      <div class="step-num">Step 1</div>
+      <div class="step-title">NFA Formal Definition</div>
+    </div>
+    <div class="step-body">
+      <div class="step-placeholder">⬆️ Configure your NFA and click "Convert" above</div>
+      <div class="step-content" id="step1Content" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-card" id="step2">
+    <div class="step-header">
+      <div class="step-num">Step 2</div>
+      <div class="step-title">NFA Transition Table</div>
+    </div>
+    <div class="step-body">
+      <div class="step-placeholder" id="step2ph">Complete Step 1 first</div>
+      <div class="step-content" id="step2Content" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step-card" id="step3">
+    <div class="step-header">
+      <div class="step-num">Step 3</div>
+      <div class="step-title">DFA Transition Table (Subset Construction)</div>
+    </div>
+    <div class="step-body">
+      <div class="step-placeholder" id="step3ph">Complete Steps 1–2 first</div>
+      <div class="step-content" id="step3Content" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step-card" id="step4">
+    <div class="step-header">
+      <div class="step-num">Step 4</div>
+      <div class="step-title">Resulting DFA Graph</div>
+    </div>
+    <div class="step-body">
+      <div class="step-placeholder" id="step4ph">Complete Steps 1–3 first</div>
+      <div class="step-content" id="step4Content" style="display:none">
+        <div class="dfa-graph-wrap">
+          <div id="dfaSVGContainer" class="svg-graph-box" style="width:100%;height:420px;"></div>
+        </div>
+        <div class="graph-legend">
+          <span><span class="leg-circle start"></span> Start</span>
+          <span><span class="leg-circle accept"></span> Accept</span>
+          <span><span class="leg-circle dead"></span> Dead/Trap</span>
+        </div>
+        <div id="dfaSummary" class="dfa-summary"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEST STRING -->
+<section class="test-section">
+  <div class="test-inner">
+    <h2>🔬 Test a String</h2>
+    <p>After converting, simulate an input string on the resulting DFA!</p>
+    <div class="test-row">
+      <input type="text" id="testString" placeholder="Enter string e.g. 0110"/>
+      <button class="btn-test" onclick="testString()">Run Simulation</button>
+    </div>
+    <div id="testResult" class="test-result"></div>
+    <div id="testTrace" class="test-trace"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">🤖 AutomataLearn</div>
+    <p>A teaching tool for Theory of Computation students.</p>
+    <p class="footer-tip">💡 Tip: The DFA state {q0,q1} means the machine is <em>simultaneously</em> in both q0 and q1 — that's the subset construction idea!</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
